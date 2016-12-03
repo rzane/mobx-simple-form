@@ -1,5 +1,10 @@
 import test from 'ava';
+import { useStrict } from 'mobx';
 import { Form, Field } from '../src';
+
+test.before(() => {
+  useStrict(true);
+});
 
 test('get', t => {
   const form = new Form([{ name: 'username' }]);

@@ -1,4 +1,4 @@
-import { extendObservable } from 'mobx';
+import { action, extendObservable } from 'mobx';
 
 export default class Field {
   constructor({ name, type, initial = '' }) {
@@ -13,7 +13,8 @@ export default class Field {
     });
 
     extendObservable(this, {
-      value: initial
+      value: initial,
+      isFocused: false
     });
   }
 
@@ -21,15 +22,23 @@ export default class Field {
     return this.type === 'boolean';
   }
 
-  set = (value) => {
-    this.value = value;
-  }
-
   reset = () => {
     this.set(this.initial);
   }
 
-  handleChange = (eventOrValue) => {
+  set = action((value) => {
+    this.value = value;
+  })
+
+  handleFocus = action(() => {
+    this.isFocused = true;
+  })
+
+  handleBlur = action(() => {
+    this.isFocused = false;
+  })
+
+  handleChange = action((eventOrValue) => {
     if (eventOrValue.target) {
       if (this.isBoolean) {
         this.value = eventOrValue.target.checked;
@@ -39,5 +48,5 @@ export default class Field {
     } else {
       this.value = eventOrValue;
     }
-  }
+  })
 }

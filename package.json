@@ -18,7 +18,6 @@
   "ava": {
     "require": [
       "babel-register"
-    ],
-    "babel": "inherit"
+    ]
   }
 }

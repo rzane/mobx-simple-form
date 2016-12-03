@@ -1,5 +1,10 @@
 import test from 'ava';
+import { useStrict } from 'mobx';
 import { Field } from '../src';
+
+test.before(() => {
+  useStrict(true);
+});
 
 test('constructor - throws when no name is given', t => {
   const error = t.throws(() => new Field({}));
