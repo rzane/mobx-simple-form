@@ -2,6 +2,10 @@ import test from 'ava';
 import { useStrict } from 'mobx';
 import { Field } from '../src';
 
+const makeField = (config) => {
+  return new Field({ name: 'fixture', ...config });
+};
+
 test.before(() => {
   useStrict(true);
 });
@@ -12,58 +16,90 @@ test('constructor - throws when no name is given', t => {
 });
 
 test('name', t => {
-  const field = new Field({ name: 'username' });
-  t.is(field.name, 'username');
+  const field = makeField();
+  t.is(field.name, 'fixture');
 });
 
 test('initial', t => {
-  const normal = new Field({ name: 'username' });
+  const normal = makeField();
   t.is(normal.initial, '');
   t.is(normal.value, '');
 
-  const override = new Field({ name: 'username', initial: 'pasta' });
+  const override = makeField({ initial: 'pasta' });
   t.is(override.initial, 'pasta');
   t.is(override.value, 'pasta');
 });
 
-test('isBoolean', t => {
-  const notBool = new Field({ name: 'confirm' });
-  t.false(notBool.isBoolean);
+test('type', t => {
+  const field = makeField({ type: 'foo' });
+  t.is(field.type, 'foo');
+})
 
-  const bool = new Field({ name: 'confirm', type: 'boolean' });
-  t.true(bool.isBoolean);
+test('cast - default', t => {
+  const field = makeField();
+  t.is(field.cast('foo'), 'foo');
+});
+
+test('cast - default with input', t => {
+  const field = makeField();
+  t.is(field.cast({ target: { value: 'foo' } }), 'foo');
+  t.is(field.cast({ target: { value: '' } }), '');
+});
+
+test('cast - default with checkbox', t => {
+  const field = makeField();
+  t.true(field.cast({ target: { checked: true, type: 'checkbox' } }));
+  t.false(field.cast({ target: { checked: false, type: 'checkbox' } }));
+});
+
+test('cast - string', t => {
+  const field = makeField({ type: 'string' });
+  t.is(field.cast(1), '1');
+  t.is(field.cast('foo'), 'foo');
+});
+
+test('cast - number', t => {
+  const field = makeField({ type: 'number' });
+  t.is(field.cast('1'), 1);
+  t.is(field.cast(1), 1);
+  t.is(field.cast(0), 0);
+})
+
+test('cast - boolean', t => {
+  const field = makeField({ type: 'boolean' });
+
+  [true, '1', 1].forEach(value => t.true(field.cast(value)));
+  [false, undefined, null, 0, ''].forEach(value => t.false(field.cast(value)));
+});
+
+test('cast - custom', t => {
+  const caster = (value) => `${value}-diddly`;
+  const field = makeField({ type: caster });
+  t.is(field.cast('foo'), 'foo-diddly');
+});
+
+test('handleChange - event', t => {
+  const field = makeField();
+  field.handleChange({ target: { value: 'meatloaf' } });
+  t.is(field.value, 'meatloaf');
 });
 
 test('set', t => {
-  const field = new Field({ name: 'username' });
+  const field = makeField();
   field.set('meatloaf');
   t.is(field.value, 'meatloaf');
 });
 
 test('handleChange', t => {
-  const field = new Field({ name: 'username' });
-  field.handleChange('meatloaf');
-  t.is(field.value, 'meatloaf');
-});
+  const caster = (value) => `${value}-diddly`;
+  const field = makeField({ type: caster });
 
-test('handleChange - event', t => {
-  const field = new Field({ name: 'username' });
-  field.handleChange({ target: { value: 'meatloaf' } });
-  t.is(field.value, 'meatloaf');
-});
-
-test('handleChange - event with boolean', t => {
-  const field = new Field({ name: 'confirm', type: 'boolean' });
-
-  field.handleChange({ target: { checked: false } });
-  t.false(field.value);
-
-  field.handleChange({ target: { checked: true } });
-  t.true(field.value);
+  field.handleChange('foo');
+  t.is(field.value, 'foo-diddly');
 });
 
 test('reset', t => {
-  const field = new Field({ name: 'username' });
+  const field = makeField();
 
   field.set('foo');
   t.is(field.value, 'foo');
@@ -73,10 +109,7 @@ test('reset', t => {
 });
 
 test('reset - with initial value', t => {
-  const field = new Field({
-    name: 'username',
-    initial: 'foo'
-  });
+  const field = makeField({ initial: 'foo' });
 
   field.set('bar');
   t.is(field.value, 'bar');

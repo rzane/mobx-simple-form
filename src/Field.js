@@ -1,6 +1,7 @@
 import { action, extendObservable } from 'mobx';
+import { getCaster } from './casters';
 
-export default class Field {
+export default class FieldStore {
   constructor({ name, type, initial = '' }) {
     if (!name) {
       throw new Error('A field must have a name.');
@@ -8,18 +9,15 @@ export default class Field {
 
     Object.assign(this, {
       name,
+      initial,
       type,
-      initial
+      cast: getCaster(type),
     });
 
     extendObservable(this, {
       value: initial,
       isFocused: false
     });
-  }
-
-  get isBoolean () {
-    return this.type === 'boolean';
   }
 
   reset = () => {
@@ -39,14 +37,6 @@ export default class Field {
   })
 
   handleChange = action((eventOrValue) => {
-    if (eventOrValue.target) {
-      if (this.isBoolean) {
-        this.value = eventOrValue.target.checked;
-      } else {
-        this.value = eventOrValue.target.value;
-      }
-    } else {
-      this.value = eventOrValue;
-    }
+    this.set(this.cast(eventOrValue));
   })
 }
