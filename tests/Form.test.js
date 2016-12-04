@@ -15,6 +15,18 @@ test('get', t => {
   t.true(form.get('fixture') instanceof Field);
 });
 
+test('values', t => {
+  const form = makeForm();
+  form.assign({ fixture: 'meatloaf' });
+  t.deepEqual(form.values, { fixture: 'meatloaf' });
+});
+
+test('errors', t => {
+  const form = makeForm();
+  form.assignErrors({ fixture: 'invalid' });
+  t.deepEqual(form.errors, { fixture: 'invalid' });
+});
+
 test('assign', t => {
   const form = makeForm();
   form.assign({ fixture: 'meatloaf' });
