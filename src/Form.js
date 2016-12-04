@@ -1,4 +1,4 @@
-import { map } from 'mobx';
+import { map, action } from 'mobx';
 import Field from './Field';
 
 export default class Form {
@@ -12,17 +12,33 @@ export default class Form {
     return this.fields.get(name);
   }
 
-  assign = (values) => {
-    Object.keys(values).forEach(name => {
+  get isValid () {
+    return this.fields.values().every(field => field.isValid);
+  }
+
+  mapWithField (object, fn) {
+    Object.keys(object).forEach(name => {
       const field = this.get(name);
 
       if (field) {
-        field.set(values[name]);
+        fn(field, object[name]);
       }
     });
   }
 
-  reset = (values) => {
+  assign = action((values) => {
+    this.mapWithField(values, (field, value) => field.set(value));
+  })
+
+  assignErrors = action((errors) => {
+    this.mapWithField(errors, (field, error) => field.setError(error));
+  })
+
+  reset = action((values) => {
     this.fields.values().forEach(field => field.reset());
-  }
+  })
+
+  validate = action(() => {
+    return this.fields.values().every(field => field.validate());
+  });
 }
