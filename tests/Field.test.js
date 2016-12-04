@@ -33,7 +33,7 @@ test('initial', t => {
 test('type', t => {
   const field = makeField({ type: 'foo' });
   t.is(field.type, 'foo');
-})
+});
 
 test('cast - default', t => {
   const field = makeField();
@@ -63,7 +63,7 @@ test('cast - number', t => {
   t.is(field.cast('1'), 1);
   t.is(field.cast(1), 1);
   t.is(field.cast(0), 0);
-})
+});
 
 test('cast - boolean', t => {
   const field = makeField({ type: 'boolean' });
@@ -82,7 +82,7 @@ test('validations', t => {
   const validator = () => null;
   const field = makeField({ validate: [validator] });
   t.is(field.validations[0], validator);
-})
+});
 
 test('validate - valid', t => {
   const validator = () => null;

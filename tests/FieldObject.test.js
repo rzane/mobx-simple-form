@@ -69,6 +69,7 @@ test('fields', t => {
 
 test('fields - invalid', t => {
   t.throws(() => {
+    /* eslint-disable no-new */
     new FieldObject({
       fields: [{
         name: 'thing',
@@ -76,7 +77,8 @@ test('fields - invalid', t => {
           name: 'something'
         }]
       }]
-    })
+    });
+    /* eslint-enable no-new */
   });
 });
 
@@ -194,7 +196,7 @@ test('validate - object', t => {
   field.set({ nested: { foo: false } });
   t.false(field.validate());
 
-  field.set({ nested: { foo: true }});
+  field.set({ nested: { foo: true } });
   t.true(field.validate());
 });
 
@@ -205,6 +207,6 @@ test('validate - array', t => {
   field.set({ repeat: [{ meat: false }] });
   t.false(field.validate());
 
-  field.set({ repeat: [{ meat: true }]});
+  field.set({ repeat: [{ meat: true }] });
   t.true(field.validate());
 });

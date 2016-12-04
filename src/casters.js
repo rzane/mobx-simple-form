@@ -29,4 +29,4 @@ export const getCaster = (type) => {
     default:
       return castDefault;
   }
-}
+};

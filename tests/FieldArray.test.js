@@ -1,6 +1,5 @@
 import test from 'ava';
-import { toJS } from 'mobx';
-import { FieldArray, FieldObject } from '../src';
+import { FieldArray } from '../src';
 
 const makeField = () => new FieldArray({
   fields: [{ name: 'fixture' }]

@@ -31,7 +31,7 @@ export default class FieldArray {
     const field = new FieldObject({
       ...this.config,
       ...extra,
-      name: this.fields.length,
+      name: this.fields.length
     });
 
     this.fields.push(field);
