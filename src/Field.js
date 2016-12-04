@@ -39,6 +39,9 @@ export default class FieldStore {
     this.error = error;
   })
 
+  // An alias to make recursion easier
+  setErrors = this.setError
+
   handleFocus = action(() => {
     this.isFocused = true;
   })
