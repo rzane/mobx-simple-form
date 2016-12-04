@@ -84,19 +84,6 @@ test('handleChange - event', t => {
   t.is(field.value, 'meatloaf');
 });
 
-test('set', t => {
-  const field = makeField();
-  field.set('meatloaf');
-  t.is(field.value, 'meatloaf');
-});
-
-test('handleChange', t => {
-  const caster = (value) => `${value}-diddly`;
-  const field = makeField({ type: caster });
-
-  field.handleChange('foo');
-  t.is(field.value, 'foo-diddly');
-});
 
 test('reset', t => {
   const field = makeField();
@@ -116,4 +103,29 @@ test('reset - with initial value', t => {
 
   field.reset();
   t.is(field.value, 'foo');
+});
+
+test('set', t => {
+  const field = makeField();
+  field.set('meatloaf');
+  t.is(field.value, 'meatloaf');
+});
+
+test('handleChange', t => {
+  const caster = (value) => `${value}-diddly`;
+  const field = makeField({ type: caster });
+
+  field.handleChange('foo');
+  t.is(field.value, 'foo-diddly');
+});
+
+test('handleFocus', t => {
+  const field = makeField();
+  t.false(field.isFocused);
+
+  field.handleFocus();
+  t.true(field.isFocused);
+
+  field.handleBlur();
+  t.false(field.isFocused);
 });
