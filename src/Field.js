@@ -48,6 +48,7 @@ export default class FieldStore {
 
   handleBlur = action(() => {
     this.isFocused = false;
+    this.validate();
   })
 
   handleChange = action((eventOrValue) => {

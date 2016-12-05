@@ -47,6 +47,10 @@ export default class FieldObject {
     return names.reduce((field, name) => field ? field.get(name) : null, this);
   }
 
+  handleRemove () {
+    throw new Error("This field is not part of a FieldArray, and therefore can't be removed");
+  }
+
   get values () {
     return traverse(this, field => field.values || field.value);
   }
@@ -70,6 +74,8 @@ export default class FieldObject {
   reset = action((values) => {
     this.fields.values().forEach(field => field.reset());
   })
+
+  handleReset = this.reset
 
   validate = action(() => {
     return this.fields.values().every(field => field.validate());

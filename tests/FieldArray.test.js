@@ -24,6 +24,9 @@ test('add', t => {
   t.is(field.get(1).name, 1);
 
   t.is(field.fields.length, 2);
+
+  field.get(1).handleRemove();
+  t.is(field.fields.length, 1);
 });
 
 test('remove', t => {
@@ -32,7 +35,7 @@ test('remove', t => {
   field.add();
   t.is(field.fields.length, 1);
 
-  field.remove(0);
+  field.remove(field.get(0));
   t.is(field.fields.length, 0);
 });
 

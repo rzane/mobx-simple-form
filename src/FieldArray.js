@@ -15,6 +15,10 @@ export default class FieldArray {
     }
   }
 
+  map (fn) {
+    return this.fields.map(fn);
+  }
+
   get values () {
     return this.fields.map(field => field.values);
   }
@@ -34,12 +38,17 @@ export default class FieldArray {
       name: this.fields.length
     });
 
+    field.handleRemove = this.remove.bind(null, field);
+
     this.fields.push(field);
     return field;
   })
 
-  remove = action((index) => {
-    this.fields.splice(index, 1);
+  // In the future, we can handle this differently than a normal add.
+  handleAdd = this.add
+
+  remove = action((field) => {
+    this.fields.remove(field);
   });
 
   set = action((values) => {

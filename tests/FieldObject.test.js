@@ -210,3 +210,8 @@ test('validate - array', t => {
   field.set({ repeat: [{ meat: true }] });
   t.true(field.validate());
 });
+
+test('handleRemove', t => {
+  const field = makeField();
+  t.throws(() => field.handleRemove());
+});
