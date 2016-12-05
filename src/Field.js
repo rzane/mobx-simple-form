@@ -26,13 +26,17 @@ export default class FieldStore {
     return !this.error;
   }
 
-  reset = () => {
+  reset = action(() => {
     this.set(this.initial);
-  }
+    this.setError(null);
+  })
 
-  set = action((value) => {
+  set = action((value, options = {}) => {
     this.value = value;
-    this.validate();
+
+    if (options.validate !== false) {
+      this.validate();
+    }
   })
 
   setError = action((error) => {

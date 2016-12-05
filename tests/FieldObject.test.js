@@ -172,10 +172,17 @@ test('reset', t => {
   t.is(field.getIn(['nested', 'foo']).value, 'bar');
   t.is(field.getIn(['nested', 'bar']).value, '');
 
-  t.is(field.getIn(['repeat', 0, 'meat']).value, 'buzz');
-  t.is(field.getIn(['repeat', 0, 'loaf']).value, '');
-  t.is(field.getIn(['repeat', 1, 'meat']).value, 'buzz');
-  t.is(field.getIn(['repeat', 1, 'loaf']).value, '');
+  t.is(field.get('repeat').fields.length, 0);
+});
+
+test('reset - clears errors', t => {
+  const field = makeValidationField();
+
+  field.set({ nested: { foo: false } });
+  t.truthy(field.getIn(['nested', 'foo']).error);
+
+  field.reset();
+  t.falsy(field.getIn(['nested', 'foo']).error);
 });
 
 test('validate', t => {

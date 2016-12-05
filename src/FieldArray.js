@@ -1,11 +1,20 @@
 import { action, observable } from 'mobx';
 import FieldObject from './FieldObject';
+import { getFieldRecursive } from './utils';
 
 export default class FieldArray {
-  constructor (config) {
-    this.name = config.name;
-    this.config = config;
+  constructor ({ name, initial = [], fields }) {
     this.fields = observable([]);
+
+    Object.assign(this, {
+      name,
+      initial,
+      fieldConfig: fields
+    });
+
+    if (initial.length) {
+      this.reset();
+    }
   }
 
   get (index) {
@@ -13,6 +22,10 @@ export default class FieldArray {
     if (this.fields.length > index) {
       return this.fields[index];
     }
+  }
+
+  getIn (names) {
+    return getFieldRecursive(this, names);
   }
 
   map (fn) {
@@ -24,7 +37,9 @@ export default class FieldArray {
   }
 
   get errors () {
-    return this.fields.map(field => field.errors);
+    return this.fields
+      .map(field => field.errors)
+      .filter(errors => Object.keys(errors).length);
   }
 
   get isValid () {
@@ -33,9 +48,9 @@ export default class FieldArray {
 
   add = action((extra) => {
     const field = new FieldObject({
-      ...this.config,
       ...extra,
-      name: this.fields.length
+      name: this.fields.length,
+      fields: this.fieldConfig
     });
 
     field.handleRemove = this.remove.bind(null, field);
@@ -64,8 +79,8 @@ export default class FieldArray {
     errors.forEach((error, index) => this.get(index).setErrors(error));
   })
 
-  reset = action((values) => {
-    this.fields.forEach(field => field.reset());
+  reset = action(() => {
+    this.set(this.initial);
   })
 
   validate = action(() => {

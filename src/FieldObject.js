@@ -1,11 +1,7 @@
 import { map, action } from 'mobx';
 import Field from './Field';
 import FieldArray from './FieldArray';
-
-const traverse = (field, fn) => field.fields.values().reduce((acc, field) => ({
-  ...acc,
-  [field.name]: fn(field)
-}), {});
+import { isEmpty, getFieldRecursive, eachWithField } from './utils';
 
 const buildField = (field) => {
   if (field.fields && !field.type) {
@@ -28,11 +24,6 @@ const buildFields = (fields) => fields.reduce((obj, field) => ({
   [field.name]: buildField(field)
 }), {});
 
-export const eachWithField = (fieldObject, object, fn) => Object.keys(object).forEach(name => {
-  const field = fieldObject.get(name);
-  if (field) fn(field, object[name]);
-});
-
 export default class FieldObject {
   constructor ({ name, fields }) {
     this.name = name;
@@ -44,38 +35,43 @@ export default class FieldObject {
   }
 
   getIn (names) {
-    return names.reduce((field, name) => field ? field.get(name) : null, this);
+    return getFieldRecursive(this, names);
   }
 
+  // This will be overridden in `FieldArray.add`
   handleRemove () {
     throw new Error("This field is not part of a FieldArray, and therefore can't be removed");
   }
 
   get values () {
-    return traverse(this, field => field.values || field.value);
+    return this.fields.values().reduce((acc, field) => ({
+      ...acc,
+      [field.name]: field.values || field.value
+    }), {});
   }
 
   get errors () {
-    return traverse(this, field => field.errors || field.error);
+    return this.fields.values().reduce((acc, field) => {
+      const error = field.errors || field.error;
+      return isEmpty(error) ? acc : { ...acc, [field.name]: error };
+    }, {});
   }
 
   get isValid () {
     return this.fields.values().every(field => field.isValid);
   }
 
-  set = action((values) => {
-    eachWithField(this, values, (field, value) => field.set(value));
+  set = action((values, options = {}) => {
+    eachWithField(this, values, (field, value) => field.set(value, options));
   })
 
   setErrors = action((errors) => {
     eachWithField(this, errors, (field, error) => field.setErrors(error));
   })
 
-  reset = action((values) => {
+  reset = action(() => {
     this.fields.values().forEach(field => field.reset());
   })
-
-  handleReset = this.reset
 
   validate = action(() => {
     return this.fields.values().every(field => field.validate());

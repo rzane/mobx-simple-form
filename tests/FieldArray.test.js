@@ -1,8 +1,21 @@
 import test from 'ava';
 import { FieldArray } from '../src';
 
-const makeField = () => new FieldArray({
+const makeField = (config) => new FieldArray({
+  ...config,
   fields: [{ name: 'fixture' }]
+});
+
+test('initial', t => {
+  const field = makeField({
+    initial: [{
+      fixture: 1
+    }, {
+      fixture: 2
+    }]
+  });
+
+  t.is(field.fields.length, 2);
 });
 
 test('get', t => {
@@ -75,4 +88,23 @@ test('setErrors - range error', t => {
   t.throws(() => {
     field.setErrors([{ fixture: 'boom' }]);
   });
+});
+
+test('reset', t => {
+  const field = makeField();
+  field.add();
+  field.reset();
+  t.is(field.fields.length, 0);
+});
+
+test('reset - initial', t => {
+  const field = makeField({
+    initial: [{
+      fixture: 'test'
+    }]
+  });
+
+  field.set([{ fixture: 'foo' }]);
+  field.reset();
+  t.is(field.getIn([0, 'fixture']).value, 'test');
 });
