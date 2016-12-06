@@ -1,21 +1,27 @@
-import { action, observable } from 'mobx';
+import { action, extendObservable } from 'mobx';
 import FieldObject from './FieldObject';
 import { getFieldRecursive } from './utils';
 
 export default class FieldArray {
-  constructor ({ name, initial = [], fields }) {
-    this.fields = observable([]);
-
+  constructor ({ name, initial = [], fields = [] }) {
     Object.assign(this, {
       name,
       initial,
       fieldConfig: fields
     });
 
+    extendObservable(this, {
+      fields: []
+    });
+
     if (initial.length) {
       this.reset();
     }
   }
+
+  /**
+   * Methods
+   */
 
   get (index) {
     // mobx will complain if we try to read a non-existant index
@@ -32,6 +38,10 @@ export default class FieldArray {
     return this.fields.map(fn);
   }
 
+  /**
+   * Computed properties
+   */
+
   get values () {
     return this.fields.map(field => field.values);
   }
@@ -46,6 +56,10 @@ export default class FieldArray {
     return this.fields.every(field => field.isValid);
   }
 
+  /**
+   * Actions
+   */
+
   add = action((extra) => {
     const field = new FieldObject({
       ...extra,
@@ -53,18 +67,15 @@ export default class FieldArray {
       fields: this.fieldConfig
     });
 
-    field.handleRemove = this.remove.bind(null, field);
+    field.handleRemove = this.remove.bind(this, field);
 
     this.fields.push(field);
     return field;
   })
 
-  // In the future, we can handle this differently than a normal add.
-  handleAdd = this.add
-
   remove = action((field) => {
     this.fields.remove(field);
-  });
+  })
 
   set = action((values) => {
     this.fields.clear();
@@ -84,6 +95,18 @@ export default class FieldArray {
   })
 
   validate = action(() => {
-    return this.fields.every(field => field.validate());
+    this.fields.forEach(field => field.validate());
   })
+
+  /**
+   * Event handlers
+   */
+
+  handleAdd = () => {
+    this.add();
+  }
+
+  handleReset = () => {
+    this.reset();
+  }
 }

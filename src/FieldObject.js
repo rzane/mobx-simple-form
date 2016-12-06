@@ -38,6 +38,10 @@ export default class FieldObject {
     this.fields = map(buildFields(fields));
   }
 
+  /**
+   * Methods
+   */
+
   get (name) {
     return this.fields.get(name);
   }
@@ -46,10 +50,9 @@ export default class FieldObject {
     return getFieldRecursive(this, names);
   }
 
-  // This will be overridden in `FieldArray.add`
-  handleRemove () {
-    throw new Error("This field is not part of a FieldArray, and therefore can't be removed");
-  }
+  /**
+   * Computed properties
+   */
 
   get values () {
     return this.fields.values().reduce((acc, field) => ({
@@ -69,6 +72,10 @@ export default class FieldObject {
     return this.fields.values().every(field => field.isValid);
   }
 
+  /**
+   * Actions
+   */
+
   set = action((values, options = {}) => {
     eachWithField(this, values, (field, value) => field.set(value, options));
   })
@@ -82,6 +89,15 @@ export default class FieldObject {
   })
 
   validate = action(() => {
-    return this.fields.values().every(field => field.validate());
+    this.fields.values().forEach(field => field.validate());
   })
+
+  /**
+   * Event handlers
+   */
+
+  // This will be overridden in `FieldArray.add`
+  handleRemove = () => {
+    throw new Error("This field is not part of a FieldArray, and therefore can't be removed");
+  }
 }

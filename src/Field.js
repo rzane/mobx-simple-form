@@ -1,5 +1,6 @@
 import { action, extendObservable } from 'mobx';
 import { getCaster } from './casters';
+import { isEmpty } from './utils';
 
 export default class FieldStore {
   constructor ({ name, type, initial = '', validate = [] }) {
@@ -22,9 +23,21 @@ export default class FieldStore {
     });
   }
 
+  /**
+   * Computed properties
+   */
+
   get isValid () {
     return !this.error;
   }
+
+  get isEmpty () {
+    return isEmpty(this.value);
+  }
+
+  /**
+   * Actions
+   */
 
   reset = action(() => {
     this.set(this.initial);
@@ -43,20 +56,18 @@ export default class FieldStore {
     this.error = error;
   })
 
-  // An alias to make recursion easier
-  setErrors = this.setError
+  // This just makes recursion easier
+  setErrors (error) {
+    this.setError(error);
+  }
 
-  handleFocus = action(() => {
+  focus = action(() => {
     this.isFocused = true;
   })
 
-  handleBlur = action(() => {
+  blur = action(() => {
     this.isFocused = false;
     this.validate();
-  })
-
-  handleChange = action((eventOrValue) => {
-    this.set(this.cast(eventOrValue));
   })
 
   validate = action(() => {
@@ -77,4 +88,20 @@ export default class FieldStore {
 
     return isValid;
   })
+
+  /**
+   * Event handlers
+   */
+
+  handleFocus = () => {
+    this.focus();
+  }
+
+  handleBlur = () => {
+    this.blur();
+  }
+
+  handleChange = (eventOrValue) => {
+    this.set(this.cast(eventOrValue));
+  }
 }

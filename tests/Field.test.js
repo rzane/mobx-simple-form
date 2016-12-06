@@ -78,6 +78,16 @@ test('cast - custom', t => {
   t.is(field.cast('foo'), 'foo-diddly');
 });
 
+test('isEmpty', t => {
+  const field = makeField();
+
+  field.set('');
+  t.true(field.isEmpty);
+
+  field.set('meatloaf');
+  t.false(field.isEmpty);
+});
+
 test('validations', t => {
   const validator = () => null;
   const field = makeField({ validate: [validator] });

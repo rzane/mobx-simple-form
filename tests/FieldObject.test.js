@@ -200,35 +200,35 @@ test('reset - clears errors', t => {
 
 test('validate', t => {
   const field = makeValidationField();
-  t.true(field.validate());
+  t.true(field.isValid);
 
   field.set({ simple: false });
-  t.false(field.validate());
+  t.false(field.isValid);
 
   field.set({ simple: true });
-  t.true(field.validate());
+  t.true(field.isValid);
 });
 
 test('validate - object', t => {
   const field = makeValidationField();
-  t.true(field.validate());
+  t.true(field.isValid);
 
   field.set({ nested: { foo: false } });
-  t.false(field.validate());
+  t.false(field.isValid);
 
   field.set({ nested: { foo: true } });
-  t.true(field.validate());
+  t.true(field.isValid);
 });
 
 test('validate - array', t => {
   const field = makeValidationField();
-  t.true(field.validate());
+  t.true(field.isValid);
 
   field.set({ repeat: [{ meat: false }] });
-  t.false(field.validate());
+  t.false(field.isValid);
 
   field.set({ repeat: [{ meat: true }] });
-  t.true(field.validate());
+  t.true(field.isValid);
 });
 
 test('handleRemove', t => {
