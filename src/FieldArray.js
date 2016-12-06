@@ -11,7 +11,11 @@ export default class FieldArray {
     });
 
     extendObservable(this, {
-      fields: []
+      fields: [],
+
+      get isValid () {
+        return this.fields.every(field => field.isValid);
+      }
     });
 
     if (initial.length) {
@@ -51,10 +55,6 @@ export default class FieldArray {
   /**
    * Getters
    */
-
-  get isValid () {
-    return this.fields.every(field => field.isValid);
-  }
 
   /**
    * Actions

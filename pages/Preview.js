@@ -28,7 +28,7 @@ const theme = {
 const Preview = ({ form }) => (
   <JSONTree
     hideRoot
-    data={{values: form.values, errors: form.errors}}
+    data={{'values()': form.values(), 'errors()': form.errors()}}
     theme={theme}
     shouldExpandNode={alwaysTrue}
   />

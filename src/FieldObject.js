@@ -1,4 +1,4 @@
-import { map, action } from 'mobx';
+import { asMap, extendObservable, action } from 'mobx';
 import Field from './Field';
 import FieldArray from './FieldArray';
 import { isEmpty, getFieldRecursive, eachWithField } from './utils';
@@ -35,7 +35,14 @@ const buildFields = (fields) => fields.reduce((obj, field) => ({
 export default class FieldObject {
   constructor ({ name, fields }) {
     this.name = name;
-    this.fields = map(buildFields(fields));
+
+    extendObservable(this, {
+      fields: asMap(buildFields(fields)),
+
+      get isValid () {
+        return this.fields.values().every(field => field.isValid);
+      }
+    });
   }
 
   /**
@@ -62,14 +69,6 @@ export default class FieldObject {
       const error = field.errors ? field.errors() : field.error;
       return isEmpty(error) ? acc : { ...acc, [field.name]: error };
     }, {});
-  }
-
-  /**
-   * Getters
-   */
-
-  get isValid () {
-    return this.fields.values().every(field => field.isValid);
   }
 
   /**

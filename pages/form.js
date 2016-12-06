@@ -1,32 +1,31 @@
-import { Form } from '../src';
-import { presence } from '../src/validations';
+import Form, { presence } from '../lib';
 
 export default new Form({
   fields: [{
     name: 'firstName',
-    validate: [presence]
+    validate: [presence()]
   }, {
     name: 'lastName',
-    validate: [presence]
+    validate: [presence()]
   }, {
     name: 'address',
     type: 'object',
     fields: [{
       name: 'street',
-      validate: [presence]
+      validate: [presence()]
     }, {
       name: 'city',
-      validate: [presence]
+      validate: [presence()]
     }]
   }, {
     name: 'contacts',
     type: 'array',
     fields: [{
       name: 'name',
-      validate: [presence]
+      validate: [presence()]
     }, {
       name: 'email',
-      validate: [presence]
+      validate: [presence()]
     }]
   }]
 });

@@ -1,9 +1,9 @@
-import React, { Component } from 'react'; // eslint-disable-line
+import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import JSONTree from 'react-json-tree'; // eslint-disable-line
-import Head from 'next/head'; // eslint-disable-line
-import UserForm from './UserForm'; // eslint-disable-line
-import Preview from './Preview'; // eslint-disable-line
+import Devtools from 'mobx-react-devtools';
+import Head from 'next/head';
+import UserForm from './UserForm';
+import Preview from './Preview';
 import form from './form';
 
 class App extends Component {
@@ -31,6 +31,7 @@ class App extends Component {
         </Head>
 
         <section className='hero is-primary'>
+          <Devtools />
           <div className='hero-body'>
             <div className='container'>
               <h1 className='title'>

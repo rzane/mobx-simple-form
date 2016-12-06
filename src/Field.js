@@ -19,20 +19,16 @@ export default class FieldStore {
     extendObservable(this, {
       error: null,
       value: initial,
-      isFocused: false
+      isFocused: false,
+
+      get isValid () {
+        return !this.error;
+      },
+
+      get isEmpty () {
+        return isEmpty(this.value);
+      }
     });
-  }
-
-  /**
-   * Computed properties
-   */
-
-  get isValid () {
-    return !this.error;
-  }
-
-  get isEmpty () {
-    return isEmpty(this.value);
   }
 
   /**
