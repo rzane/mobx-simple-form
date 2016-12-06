@@ -60,7 +60,7 @@ export default class FieldArray {
    * Actions
    */
 
-  add = action((extra) => {
+  add = action('FieldArray.add', (extra) => {
     const field = new FieldObject({
       ...extra,
       name: this.fields.length,
@@ -73,16 +73,16 @@ export default class FieldArray {
     return field;
   })
 
-  remove = action((field) => {
+  remove = action('FieldArray.remove', (field) => {
     this.fields.remove(field);
   })
 
-  set = action((values) => {
+  set = action('FieldArray.set', (values) => {
     this.fields.clear();
     values.forEach(value => this.add({ value }).set(value));
   })
 
-  setErrors = action((errors) => {
+  setErrors = action('FieldArray.setErrors', (errors) => {
     if (errors.length !== this.fields.length) {
       throw new RangeError('The number of errors does not match the number of fields.');
     }
@@ -90,11 +90,11 @@ export default class FieldArray {
     errors.forEach((error, index) => this.get(index).setErrors(error));
   })
 
-  reset = action(() => {
+  reset = action('FieldArray.reset', () => {
     this.set(this.initial);
   })
 
-  validate = action(() => {
+  validate = action('FieldArray.validate', () => {
     this.fields.forEach(field => field.validate());
   })
 

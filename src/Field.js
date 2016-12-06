@@ -35,12 +35,12 @@ export default class FieldStore {
    * Actions
    */
 
-  reset = action(() => {
+  reset = action('Field.reset', () => {
     this.set(this.initial);
     this.setError(null);
   })
 
-  set = action((value, options = {}) => {
+  set = action('Field.set', (value, options = {}) => {
     this.value = value;
 
     if (options.validate !== false) {
@@ -48,7 +48,7 @@ export default class FieldStore {
     }
   })
 
-  setError = action((error) => {
+  setError = action('Field.setError', (error) => {
     this.error = error;
   })
 
@@ -57,16 +57,16 @@ export default class FieldStore {
     this.setError(error);
   }
 
-  focus = action(() => {
+  focus = action('Field.focus', () => {
     this.isFocused = true;
   })
 
-  blur = action(() => {
+  blur = action('Field.blur', () => {
     this.isFocused = false;
     this.validate();
   })
 
-  validate = action(() => {
+  validate = action('Field.validate', () => {
     const isValid = this.validations.every((validation) => {
       const error = validation(this);
 

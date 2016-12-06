@@ -75,19 +75,19 @@ export default class FieldObject {
    * Actions
    */
 
-  set = action((values, options = {}) => {
+  set = action('FieldObject.set', (values, options = {}) => {
     eachWithField(this, values, (field, value) => field.set(value, options));
   })
 
-  setErrors = action((errors) => {
+  setErrors = action('FieldObject.setErrors', (errors) => {
     eachWithField(this, errors, (field, error) => field.setErrors(error));
   })
 
-  reset = action(() => {
+  reset = action('FieldObject.reset', () => {
     this.fields.values().forEach(field => field.reset());
   })
 
-  validate = action(() => {
+  validate = action('FieldObject.validate', () => {
     this.fields.values().forEach(field => field.validate());
   })
 
