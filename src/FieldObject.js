@@ -50,23 +50,23 @@ export default class FieldObject {
     return getFieldRecursive(this, names);
   }
 
-  /**
-   * Computed properties
-   */
-
-  get values () {
+  values () {
     return this.fields.values().reduce((acc, field) => ({
       ...acc,
-      [field.name]: field.values || field.value
+      [field.name]: field.values ? field.values() : field.value
     }), {});
   }
 
-  get errors () {
+  errors () {
     return this.fields.values().reduce((acc, field) => {
-      const error = field.errors || field.error;
+      const error = field.errors ? field.errors() : field.error;
       return isEmpty(error) ? acc : { ...acc, [field.name]: error };
     }, {});
   }
+
+  /**
+   * Getters
+   */
 
   get isValid () {
     return this.fields.values().every(field => field.isValid);

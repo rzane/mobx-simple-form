@@ -98,7 +98,7 @@ test('fields - invalid', t => {
 test('values', t => {
   const field = makeField();
   field.set(fixtureData);
-  t.deepEqual(field.values, fixtureData);
+  t.deepEqual(field.values(), fixtureData);
 });
 
 test('errors', t => {
@@ -107,7 +107,7 @@ test('errors', t => {
   field.get('repeat').add();
 
   field.setErrors(fixtureData);
-  t.deepEqual(field.errors, fixtureData);
+  t.deepEqual(field.errors(), fixtureData);
 });
 
 test('get', t => {

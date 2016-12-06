@@ -6,6 +6,12 @@ const makeField = (config) => new FieldArray({
   fields: [{ name: 'fixture' }]
 });
 
+const fixtureData = [{
+  fixture: 'Rick'
+}, {
+  fixture: 'Flair'
+}];
+
 test('initial', t => {
   const field = makeField({
     initial: [{
@@ -24,6 +30,18 @@ test('get', t => {
 
   t.truthy(field.get(0));
   t.falsy(field.get(1));
+});
+
+test('values', t => {
+  const field = makeField();
+  field.set(fixtureData);
+  t.deepEqual(field.values(), fixtureData);
+});
+
+test('errors', t => {
+  const field = makeField();
+  field.set(fixtureData);
+  t.deepEqual(field.values(), fixtureData);
 });
 
 test('add', t => {
@@ -54,12 +72,7 @@ test('remove', t => {
 
 test('set', t => {
   const field = makeField();
-
-  field.set([{
-    fixture: 'Rick'
-  }, {
-    fixture: 'Flair'
-  }]);
+  field.set(fixtureData);
 
   t.is(field.fields.length, 2);
   t.is(field.get(0).get('fixture').value, 'Rick');
@@ -71,15 +84,11 @@ test('setErrors', t => {
   field.add();
   field.add();
 
-  field.setErrors([{
-    fixture: 'foo'
-  }, {
-    fixture: 'bar'
-  }]);
+  field.setErrors(fixtureData);
 
   t.false(field.isValid);
-  t.is(field.get(0).get('fixture').error, 'foo');
-  t.is(field.get(1).get('fixture').error, 'bar');
+  t.is(field.getIn([0, 'fixture']).error, 'Rick');
+  t.is(field.getIn([1, 'fixture']).error, 'Flair');
 });
 
 test('setErrors - range error', t => {

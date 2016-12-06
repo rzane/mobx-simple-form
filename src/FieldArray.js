@@ -38,19 +38,19 @@ export default class FieldArray {
     return this.fields.map(fn);
   }
 
-  /**
-   * Computed properties
-   */
-
-  get values () {
-    return this.fields.map(field => field.values);
+  values () {
+    return this.fields.map(field => field.values());
   }
 
-  get errors () {
+  errors () {
     return this.fields
-      .map(field => field.errors)
+      .map(field => field.errors())
       .filter(errors => Object.keys(errors).length);
   }
+
+  /**
+   * Getters
+   */
 
   get isValid () {
     return this.fields.every(field => field.isValid);
