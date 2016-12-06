@@ -23,14 +23,16 @@
     "react-json-tree": "^0.10.0"
   },
   "dependencies": {
-    "mobx": "^2.6.4"
+    "mobx": "^2.6.4",
+    "postinstall-build": "^2.1.3"
   },
   "scripts": {
-    "start": "concurrently 'npm run build -- --watch' 'next'",
+    "start": "concurrently \"npm run build -- --watch\" \"next\"",
     "test": "ava",
     "lint": "eslint src tests pages",
     "lint:fix": "eslint src tests --fix",
-    "build": "babel src --out-dir lib"
+    "build": "babel src --out-dir lib",
+    "postinstall": "postinstall-build lib --script build --silent"
   },
   "ava": {
     "require": [
