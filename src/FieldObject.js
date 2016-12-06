@@ -16,12 +16,20 @@ const buildField = (field) => {
     return new FieldArray(field);
   }
 
+  if (typeof field === 'string') {
+    return new Field({ name: field });
+  }
+
   return new Field(field);
 };
 
+const getFieldName = (field) => (
+  typeof field === 'string' ? field : field.name
+);
+
 const buildFields = (fields) => fields.reduce((obj, field) => ({
   ...obj,
-  [field.name]: buildField(field)
+  [getFieldName(field)]: buildField(field)
 }), {});
 
 export default class FieldObject {

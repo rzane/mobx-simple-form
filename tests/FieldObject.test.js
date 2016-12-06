@@ -60,6 +60,19 @@ test.before(() => {
   useStrict(true);
 });
 
+test('constructor shorthand', t => {
+  const field = new FieldObject({
+    fields: ['simple', {
+      name: 'nested',
+      type: 'object',
+      fields: ['foo']
+    }]
+  });
+
+  t.is(field.get('simple').name, 'simple');
+  t.is(field.getIn(['nested', 'foo']).name, 'foo');
+});
+
 test('fields', t => {
   const field = makeField();
   t.true(field.get('simple') instanceof Field);
