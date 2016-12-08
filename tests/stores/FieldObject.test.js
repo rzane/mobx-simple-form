@@ -1,6 +1,8 @@
 import test from 'ava';
 import { useStrict } from 'mobx';
-import { Field, FieldObject, FieldArray } from '../src';
+import Field from '../../src/stores/Field';
+import FieldObject from '../../src/stores/FieldObject';
+import FieldArray from '../../src/stores/FieldArray';
 
 const fixtureData = {
   simple: 'jawn',
@@ -18,28 +20,23 @@ const fixtureData = {
 };
 
 const makeField = ({ simple, nested, repeat } = {}) => new FieldObject({
-  fields: [{
-    name: 'simple',
-    ...simple
-  }, {
-    name: 'nested',
-    type: 'object',
-    fields: [{
-      name: 'foo',
-      ...nested
-    }, {
-      name: 'bar'
-    }]
-  }, {
-    name: 'repeat',
-    type: 'array',
-    fields: [{
-      name: 'meat',
-      ...repeat
-    }, {
-      name: 'loaf'
-    }]
-  }]
+  fields: [
+    new Field({ name: 'simple', ...simple }),
+    new FieldObject({
+      name: 'nested',
+      fields: [
+        new Field({ name: 'foo', ...nested }),
+        new Field({ name: 'bar' })
+      ]
+    }),
+    new FieldArray({
+      name: 'repeat',
+      fields: [
+        { name: 'meat', ...repeat },
+        { name: 'loaf' }
+      ]
+    })
+  ]
 });
 
 const makeValidationField = () => {
@@ -58,56 +55,6 @@ const makeValidationField = () => {
 
 test.before(() => {
   useStrict(true);
-});
-
-test('constructor shorthand', t => {
-  const field = new FieldObject({
-    fields: ['simple', {
-      name: 'nested',
-      type: 'object',
-      fields: ['foo']
-    }]
-  });
-
-  t.is(field.get('simple').name, 'simple');
-  t.is(field.getIn(['nested', 'foo']).name, 'foo');
-});
-
-test('fields', t => {
-  const field = makeField();
-  t.true(field.get('simple') instanceof Field);
-  t.true(field.get('nested') instanceof FieldObject);
-  t.true(field.get('repeat') instanceof FieldArray);
-});
-
-test('fields - invalid', t => {
-  t.throws(() => {
-    /* eslint-disable no-new */
-    new FieldObject({
-      fields: [{
-        name: 'thing',
-        fields: [{
-          name: 'something'
-        }]
-      }]
-    });
-    /* eslint-enable no-new */
-  });
-});
-
-test('values', t => {
-  const field = makeField();
-  field.set(fixtureData);
-  t.deepEqual(field.values(), fixtureData);
-});
-
-test('errors', t => {
-  const field = makeField();
-  field.get('repeat').add();
-  field.get('repeat').add();
-
-  field.setErrors(fixtureData);
-  t.deepEqual(field.errors(), fixtureData);
 });
 
 test('get', t => {
@@ -136,9 +83,23 @@ test('getIn', t => {
   t.falsy(field.getIn(['repeat', 0, 'unknown']));
 });
 
+test('values', t => {
+  const field = makeField();
+  field.set(fixtureData);
+  t.deepEqual(field.values(), fixtureData);
+});
+
+test('errors', t => {
+  const field = makeField();
+  field.get('repeat').add();
+  field.get('repeat').add();
+
+  field.setErrors(fixtureData);
+  t.deepEqual(field.errors(), fixtureData);
+});
+
 test('set', t => {
   const field = makeField();
-
   field.set(fixtureData);
 
   t.is(field.get('simple').value, 'jawn');

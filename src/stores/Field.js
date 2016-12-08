@@ -1,6 +1,6 @@
 import { action, extendObservable } from 'mobx';
-import { getCaster } from './casters';
-import { isEmpty } from './utils';
+import { getCaster } from '../casters';
+import { isEmpty } from '../utils';
 
 export default class FieldStore {
   constructor ({ name, type, initial = '', validate = [] }) {

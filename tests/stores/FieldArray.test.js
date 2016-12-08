@@ -1,5 +1,5 @@
 import test from 'ava';
-import { FieldArray } from '../src';
+import FieldArray from '../../src/stores/FieldArray';
 
 const makeField = (config) => new FieldArray({
   ...config,

@@ -1,10 +1,10 @@
 import test from 'ava';
 import { useStrict } from 'mobx';
-import { Field } from '../src';
+import Field from '../../src/stores/Field';
 
-const makeField = (config) => {
-  return new Field({ name: 'fixture', ...config });
-};
+const makeField = (config) => (
+  new Field({ name: 'fixture', ...config })
+);
 
 test.before(() => {
   useStrict(true);
