@@ -1,46 +1,15 @@
-import { asMap, extendObservable, action } from 'mobx';
-import Field from './Field';
-import FieldArray from './FieldArray';
+import { extendObservable, action } from 'mobx';
 import { isEmpty, getFieldRecursive, eachWithField } from '../utils';
-
-const buildField = (field) => {
-  if (field.fields && !field.type) {
-    throw new Error('Nested fields must declare a type of either `object` or `array`.');
-  }
-
-  if (field.fields && field.type === 'object') {
-    return new FieldObject(field);
-  }
-
-  if (field.fields && field.type === 'array') {
-    return new FieldArray(field);
-  }
-
-  if (typeof field === 'string') {
-    return new Field({ name: field });
-  }
-
-  return new Field(field);
-};
-
-const getFieldName = (field) => (
-  typeof field === 'string' ? field : field.name
-);
-
-const buildFields = (fields) => fields.reduce((obj, field) => ({
-  ...obj,
-  [getFieldName(field)]: buildField(field)
-}), {});
 
 export default class FieldObject {
   constructor ({ name, fields }) {
     this.name = name;
 
     extendObservable(this, {
-      fields: asMap(buildFields(fields)),
+      fields,
 
       get isValid () {
-        return this.fields.values().every(field => field.isValid);
+        return this.fields.every(field => field.isValid);
       }
     });
   }
@@ -50,7 +19,7 @@ export default class FieldObject {
    */
 
   get (name) {
-    return this.fields.get(name);
+    return this.fields.find(f => f.name === name);
   }
 
   getIn (names) {

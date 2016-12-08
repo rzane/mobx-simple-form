@@ -3,7 +3,6 @@ import { useStrict } from 'mobx';
 import Form, {
   field,
   hasOne,
-  hasMany,
   Field
 } from '../../src';
 
@@ -13,36 +12,21 @@ test.before(() => {
 
 test('create', t => {
   const form = Form.create([
-    'a',
-    { name: 'b' },
-    field('c'),
-    hasOne('d', [
-      'e',
-      hasOne('f', [{ name: 'g' }]),
-      hasMany('h', [field('i')])
-    ]),
-    hasMany('j', [
-      'k',
-      hasOne('l', ['m']),
-      hasMany('n', [field('o')])
+    'name',
+    field('email'),
+    hasOne('address', [
+      'line1',
+      field('line2'),
+      hasOne('city', ['name'])
     ])
   ]);
 
-  form.getIn(['d', 'h']).add();
-  form.getIn(['j']).add();
-  form.getIn(['j', 0, 'n']).add();
-  form.getIn(['j', 0, 'n']).add();
-
   const coordinates = [
-    ['a'],
-    ['b'],
-    ['c'],
-    ['d', 'e'],
-    ['d', 'f', 'g'],
-    ['d', 'h', 0, 'i'],
-    ['j', 0, 'k'],
-    ['j', 0, 'l', 'm'],
-    ['j', 0, 'n', 1, 'o']
+    ['name'],
+    ['email'],
+    ['address', 'line1'],
+    ['address', 'line2'],
+    ['address', 'city', 'name']
   ];
 
   coordinates.forEach((coordinate) => {
