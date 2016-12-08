@@ -1,26 +1,23 @@
 import React, { PropTypes } from 'react';
 import { observer } from 'mobx-react';
-import css from 'next/css';
 
 const Field = ({ field, label, component: Input, ...props }) => (
-  <div {...css({ marginBottom: 15 })}>
+  <p className='control'>
     <label htmlFor={field.name} className='label'>
       {label}
     </label>
-    <p className='control'>
-      <Input
-        name={field.name}
-        value={field.value}
-        onChange={field.handleChange}
-        onFocus={field.handleFocus}
-        onBlur={field.handleBlur}
-        placeholder={label}
-        className={`input ${field.error ? 'is-danger' : ''}`}
-        {...props}
-      />
-      {field.error && <span className='help is-danger'>{field.error}</span>}
-    </p>
-  </div>
+    <Input
+      name={field.name}
+      value={field.value}
+      onChange={field.handleChange}
+      onFocus={field.handleFocus}
+      onBlur={field.handleBlur}
+      placeholder={label}
+      className={`input ${field.error ? 'is-danger' : ''}`}
+      {...props}
+    />
+    {field.error && <span className='help is-danger'>{field.error}</span>}
+  </p>
 );
 
 Field.defaultProps = {
