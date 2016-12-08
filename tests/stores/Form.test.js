@@ -4,9 +4,7 @@ import Form, {
   field,
   hasOne,
   hasMany,
-  Field // ,
-  // FieldObject,
-  // FieldArray,
+  Field
 } from '../../src';
 
 test.before(() => {
@@ -14,11 +12,6 @@ test.before(() => {
 });
 
 test('create', t => {
-  const form = Form.create(['simple']);
-  t.is(form.get('simple').name, 'simple');
-});
-
-test.only('form is built correctly', t => {
   const form = Form.create([
     'a',
     { name: 'b' },
@@ -35,31 +28,25 @@ test.only('form is built correctly', t => {
     ])
   ]);
 
-  console.log(form.get('d'));
-
   form.getIn(['d', 'h']).add();
-  form.getIn(['j', 'n']).add();
-  form.getIn(['j', 'n']).add();
+  form.getIn(['j']).add();
+  form.getIn(['j', 0, 'n']).add();
+  form.getIn(['j', 0, 'n']).add();
 
-  const coordinates = [{
-    type: Field,
-    paths: [
-      ['a'],
-      ['b'],
-      ['c'],
-      ['d', 'e'],
-      ['d', 'f', 'g'],
-      ['d', 'h', 0, 'i'],
-      ['j', 'k'],
-      ['j', 'l', 'm'],
-      ['j', 'n', 1, 'o']
-    ]
-  }];
+  const coordinates = [
+    ['a'],
+    ['b'],
+    ['c'],
+    ['d', 'e'],
+    ['d', 'f', 'g'],
+    ['d', 'h', 0, 'i'],
+    ['j', 0, 'k'],
+    ['j', 0, 'l', 'm'],
+    ['j', 0, 'n', 1, 'o']
+  ];
 
-  coordinates.forEach(({ type, paths }) => {
-    paths.forEach(path => {
-      t.true(form.getIn(path) instanceof Field);
-      t.is(form.getIn(path).name, path[path.length - 1]);
-    });
+  coordinates.forEach((coordinate) => {
+    t.true(form.getIn(coordinate) instanceof Field);
+    t.is(form.getIn(coordinate).name, coordinate[coordinate.length - 1]);
   });
 });

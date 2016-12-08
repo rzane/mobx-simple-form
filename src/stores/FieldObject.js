@@ -1,7 +1,7 @@
 import { asMap, extendObservable, action } from 'mobx';
 import Field from './Field';
 import FieldArray from './FieldArray';
-import { isEmpty, getFieldRecursive, eachWithField } from './utils';
+import { isEmpty, getFieldRecursive, eachWithField } from '../utils';
 
 const buildField = (field) => {
   if (field.fields && !field.type) {

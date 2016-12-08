@@ -1,6 +1,6 @@
 import { action, extendObservable } from 'mobx';
 import FieldObject from './FieldObject';
-import { getFieldRecursive } from './utils';
+import { getFieldRecursive } from '../utils';
 
 export default class FieldArray {
   constructor ({ name, initial = [], fields = [] }) {
