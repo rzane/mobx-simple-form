@@ -1,9 +1,17 @@
 import test from 'ava';
-import FieldArray from '../../src/stores/FieldArray';
+import { useStrict } from 'mobx';
+import { Field, FieldArray, FieldObject } from '../../src';
 
 const makeField = (config) => new FieldArray({
   ...config,
-  fields: [{ name: 'fixture' }]
+  buildFields (name) {
+    return new FieldObject({
+      name,
+      fields: [
+        new Field({ name: 'fixture' })
+      ]
+    });
+  }
 });
 
 const fixtureData = [{
@@ -11,6 +19,10 @@ const fixtureData = [{
 }, {
   fixture: 'Flair'
 }];
+
+test.before(() => {
+  useStrict(true);
+});
 
 test('initial', t => {
   const field = makeField({
@@ -49,10 +61,10 @@ test('add', t => {
   t.is(field.fields.length, 0);
 
   field.add();
-  t.is(field.get(0).name, 0);
+  t.is(field.get(0).name, '0');
 
   field.add();
-  t.is(field.get(1).name, 1);
+  t.is(field.get(1).name, '1');
 
   t.is(field.fields.length, 2);
 

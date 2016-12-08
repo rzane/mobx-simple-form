@@ -1,5 +1,12 @@
 import { extendObservable, action } from 'mobx';
-import { isEmpty, getFieldRecursive, eachWithField } from '../utils';
+import { isEmpty, getFieldRecursive } from '../utils';
+
+const eachWithField = (parent, object, fn) => {
+  return Object.keys(object).forEach(name => {
+    const field = parent.get(name);
+    if (field) fn(field, object[name]);
+  });
+};
 
 export default class FieldObject {
   constructor ({ name, fields }) {
@@ -27,14 +34,14 @@ export default class FieldObject {
   }
 
   values () {
-    return this.fields.values().reduce((acc, field) => ({
+    return this.fields.reduce((acc, field) => ({
       ...acc,
       [field.name]: field.values ? field.values() : field.value
     }), {});
   }
 
   errors () {
-    return this.fields.values().reduce((acc, field) => {
+    return this.fields.reduce((acc, field) => {
       const error = field.errors ? field.errors() : field.error;
       return isEmpty(error) ? acc : { ...acc, [field.name]: error };
     }, {});
@@ -44,8 +51,8 @@ export default class FieldObject {
    * Actions
    */
 
-  set = action('FieldObject.set', (values, options = {}) => {
-    eachWithField(this, values, (field, value) => field.set(value, options));
+  set = action('FieldObject.set', (values) => {
+    eachWithField(this, values, (field, value) => field.set(value));
   })
 
   setErrors = action('FieldObject.setErrors', (errors) => {
@@ -53,16 +60,20 @@ export default class FieldObject {
   })
 
   reset = action('FieldObject.reset', () => {
-    this.fields.values().forEach(field => field.reset());
+    this.fields.forEach(field => field.reset());
   })
 
   validate = action('FieldObject.validate', () => {
-    this.fields.values().forEach(field => field.validate());
+    this.fields.forEach(field => field.validate());
   })
 
   /**
    * Event handlers
    */
+
+  handleReset = () => {
+    this.reset();
+  }
 
   // This will be overridden in `FieldArray.add`
   handleRemove = () => {

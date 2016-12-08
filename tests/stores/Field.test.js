@@ -1,6 +1,6 @@
 import test from 'ava';
 import { useStrict } from 'mobx';
-import Field from '../../src/stores/Field';
+import { Field } from '../../src';
 
 const makeField = (config) => (
   new Field({ name: 'fixture', ...config })

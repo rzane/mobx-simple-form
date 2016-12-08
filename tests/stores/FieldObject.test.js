@@ -1,8 +1,6 @@
 import test from 'ava';
 import { useStrict } from 'mobx';
-import Field from '../../src/stores/Field';
-import FieldObject from '../../src/stores/FieldObject';
-import FieldArray from '../../src/stores/FieldArray';
+import { Field, FieldArray, FieldObject } from '../../src';
 
 const fixtureData = {
   simple: 'jawn',
@@ -31,10 +29,15 @@ const makeField = ({ simple, nested, repeat } = {}) => new FieldObject({
     }),
     new FieldArray({
       name: 'repeat',
-      fields: [
-        { name: 'meat', ...repeat },
-        { name: 'loaf' }
-      ]
+      buildFields (name) {
+        return new FieldObject({
+          name,
+          fields: [
+            new Field({ name: 'meat', ...repeat }),
+            new Field({ name: 'loaf' })
+          ]
+        });
+      }
     })
   ]
 });
@@ -99,7 +102,7 @@ test('errors', t => {
 });
 
 test('set', t => {
-  const field = makeField();
+  const field = makeValidationField();
   field.set(fixtureData);
 
   t.is(field.get('simple').value, 'jawn');

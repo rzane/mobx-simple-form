@@ -1,13 +1,12 @@
 import { action, extendObservable } from 'mobx';
-import FieldObject from './FieldObject';
 import { getFieldRecursive } from '../utils';
 
 export default class FieldArray {
-  constructor ({ name, initial = [], fields = [] }) {
+  constructor ({ name, buildFields, initial = [] }) {
     Object.assign(this, {
       name,
       initial,
-      fieldConfig: fields
+      buildFields
     });
 
     extendObservable(this, {
@@ -61,12 +60,11 @@ export default class FieldArray {
    */
 
   add = action('FieldArray.add', (extra) => {
-    const field = new FieldObject({
-      ...extra,
-      name: this.fields.length,
-      fields: this.fieldConfig
-    });
+    const name = this.fields.length.toString();
+    const field = this.buildFields(name);
 
+    // Monkey-patch the field with an event handler
+    // to remove the field.
     field.handleRemove = this.remove.bind(this, field);
 
     this.fields.push(field);
@@ -79,7 +77,7 @@ export default class FieldArray {
 
   set = action('FieldArray.set', (values) => {
     this.fields.clear();
-    values.forEach(value => this.add({ value }).set(value));
+    values.forEach(value => this.add().set(value));
   })
 
   setErrors = action('FieldArray.setErrors', (errors) => {
