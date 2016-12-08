@@ -52,10 +52,6 @@ export default class FieldArray {
   }
 
   /**
-   * Getters
-   */
-
-  /**
    * Actions
    */
 
