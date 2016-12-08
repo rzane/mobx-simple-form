@@ -12,6 +12,11 @@ export default class FieldObject {
   constructor ({ name, fields }) {
     this.name = name;
 
+    this.indexedFields = fields.reduce(
+      (acc, f) => ({ ...acc, [f.name]: f }),
+      {}
+    );
+
     extendObservable(this, {
       fields,
 
@@ -26,7 +31,7 @@ export default class FieldObject {
    */
 
   get (name) {
-    return this.fields.find(f => f.name === name);
+    return this.indexedFields[name];
   }
 
   getIn (names) {
