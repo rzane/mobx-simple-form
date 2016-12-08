@@ -31,8 +31,12 @@ test('initial', t => {
 });
 
 test('type', t => {
-  const field = makeField({ type: 'foo' });
-  t.is(field.type, 'foo');
+  const field = makeField({ type: 'string' });
+  t.is(field.type, 'string');
+});
+
+test('type - when invalid', t => {
+  t.throws(() => makeField({ type: 'jawn' }));
 });
 
 test('cast - default', t => {
@@ -40,41 +44,9 @@ test('cast - default', t => {
   t.is(field.cast('foo'), 'foo');
 });
 
-test('cast - default with input', t => {
-  const field = makeField();
-  t.is(field.cast({ target: { value: 'foo' } }), 'foo');
-  t.is(field.cast({ target: { value: '' } }), '');
-});
-
-test('cast - default with checkbox', t => {
-  const field = makeField();
-  t.true(field.cast({ target: { checked: true, type: 'checkbox' } }));
-  t.false(field.cast({ target: { checked: false, type: 'checkbox' } }));
-});
-
-test('cast - string', t => {
-  const field = makeField({ type: 'string' });
-  t.is(field.cast(1), '1');
-  t.is(field.cast('foo'), 'foo');
-});
-
-test('cast - number', t => {
-  const field = makeField({ type: 'number' });
-  t.is(field.cast('1'), 1);
-  t.is(field.cast(1), 1);
-  t.is(field.cast(0), 0);
-});
-
-test('cast - boolean', t => {
-  const field = makeField({ type: 'boolean' });
-
-  [true, '1', 1].forEach(value => t.true(field.cast(value)));
-  [false, undefined, null, 0, ''].forEach(value => t.false(field.cast(value)));
-});
-
 test('cast - custom', t => {
-  const caster = (value) => `${value}-diddly`;
-  const field = makeField({ type: caster });
+  const flanders = (value) => `${value}-diddly`;
+  const field = makeField({ type: flanders });
   t.is(field.cast('foo'), 'foo-diddly');
 });
 

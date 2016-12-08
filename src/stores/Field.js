@@ -1,5 +1,5 @@
 import { action, extendObservable } from 'mobx';
-import { getCaster } from '../casters';
+import createCaster from '../createCaster';
 import { isEmpty } from '../utils';
 
 export default class FieldStore {
@@ -12,7 +12,7 @@ export default class FieldStore {
       name,
       initial,
       type,
-      cast: getCaster(type),
+      cast: createCaster(type),
       validations: validate
     });
 
@@ -97,7 +97,7 @@ export default class FieldStore {
     this.blur();
   }
 
-  handleChange = (eventOrValue) => {
-    this.set(this.cast(eventOrValue));
+  handleChange = (...args) => {
+    this.set(this.cast(...args));
   }
 }
