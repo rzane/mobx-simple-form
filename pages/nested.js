@@ -3,9 +3,9 @@ import { observer } from 'mobx-react';
 import FormPage from './components/FormPage';
 import Field from './components/Field';
 import { fieldset, legend } from './components/style';
-import { form, field, hasOne, hasMany, presence } from '../lib';
+import simpleForm, { field, hasOne, hasMany, presence } from '../lib';
 
-const userForm = form([
+const userForm = simpleForm([
   'firstName',
   'lastName',
   field('email', {

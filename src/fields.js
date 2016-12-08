@@ -50,7 +50,7 @@ export const hasMany = (name, fields, options) => {
   });
 };
 
-export const form = (fields) => {
+export default (fields) => {
   assert(isArray(fields), '`form` expects an array of fields');
 
   return new Form({

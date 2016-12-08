@@ -1,9 +1,8 @@
 import test from 'ava';
-import {
+import simpleForm, {
   field,
   hasOne,
   hasMany,
-  form,
   Form,
   Field,
   FieldObject,
@@ -89,12 +88,12 @@ test('hasMany - throws when no fields are given', t => {
   t.throws(() => hasMany('foo'));
 });
 
-test('form - creates a FieldObject', t => {
-  t.true(form([]) instanceof Form);
+test('simpleForm - creates a FieldObject', t => {
+  t.true(simpleForm([]) instanceof Form);
 });
 
-test('form - builds a deeply nested form', t => {
-  const testForm = form([
+test('simpleForm - builds a deeply nested form', t => {
+  const testForm = simpleForm([
     'name',
     field('email'),
     hasOne('address', [

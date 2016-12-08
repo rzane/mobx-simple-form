@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import FormPage from './components/FormPage';
-import { form } from '../lib';
+import simpleForm from '../lib';
 
 class CompanyForm extends Component {
-  form = form(['name', 'city'])
+  form = simpleForm(['name', 'city'])
 
   handleSubmit = (event) => {
     event.preventDefault();
