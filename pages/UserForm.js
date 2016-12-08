@@ -30,6 +30,12 @@ const UserForm = ({ form, onSubmit }) => (
         label='Last name'
         field={form.get('lastName')}
       />
+
+      <Field
+        type='text'
+        label='Email address'
+        field={form.get('email')}
+      />
     </fieldset>
 
     <fieldset {...fieldset}>
