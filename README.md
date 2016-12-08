@@ -1,38 +1,8 @@
 # MobX Simple Form
 
-```javascript
-import { form, hasMany } from 'mobx-simple-form';
+Documentation coming soon.
 
-const myForm = form([
-  'company',
-  hasMany('products', ['name'])
-]);
+For now, check out the demo:
 
-const Input = ({ field }) => (
-  <input
-    name={field.name}
-    value={field.value}
-    onChange={field.handleChange}
-  />
-);
-
-const MyComponent = () => (
-  <form onSubmit={() => console.log(myForm.values())}>
-    <Input field={myForm.get('company')} />
-
-    {myForm.get('products').map(product =>
-      <div key={product.name}>
-        <Input field={product.get('name')} />
-
-        <button onClick={product.handleRemove}>
-          Remove Friend
-        </button>
-      </div>
-    )}
-
-    <button onClick={myForm.get('products').handleAdd}>
-      Add Friend
-    </button>
-  </form>
-);
-```
+* [Simple Demo](pages/simple.js)
+* [Nested Demo](pages/nested.js)
