@@ -1,3 +1,5 @@
+import { assert, isFunction } from './utils';
+
 const CASTERS = {
   string: (value) => String(value),
   number: (value) => Number(value),
@@ -8,9 +10,7 @@ const CASTERS = {
 const getCaster = (type) => {
   const caster = CASTERS[type];
 
-  if (type && !caster) {
-    throw new Error(`'${type}' is not a valid field type`);
-  }
+  assert(!type || caster, `'${type}' is not a valid field type`);
 
   return caster || CASTERS.noop;
 };
@@ -28,7 +28,7 @@ const extractValue = (eventOrValue) => {
 };
 
 const createCaster = (type) => {
-  if (typeof type === 'function') {
+  if (isFunction(type)) {
     return type;
   }
 

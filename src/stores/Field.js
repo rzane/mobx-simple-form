@@ -1,12 +1,10 @@
 import { action, extendObservable } from 'mobx';
 import createCaster from '../createCaster';
-import { isEmpty } from '../utils';
+import { assert, isEmpty } from '../utils';
 
 export default class FieldStore {
   constructor ({ name, type, initial = '', validate = [] }) {
-    if (!name) {
-      throw new Error('A field must have a name.');
-    }
+    assert(name, 'A field must have a name.');
 
     Object.assign(this, {
       name,

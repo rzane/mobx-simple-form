@@ -1,5 +1,5 @@
 import { action, extendObservable } from 'mobx';
-import { getFieldRecursive } from '../utils';
+import { assert, getFieldRecursive } from '../utils';
 
 export default class FieldArray {
   constructor ({ name, buildFields, initial = [] }) {
@@ -77,9 +77,10 @@ export default class FieldArray {
   })
 
   setErrors = action('FieldArray.setErrors', (errors) => {
-    if (errors.length !== this.fields.length) {
-      throw new RangeError('The number of errors does not match the number of fields.');
-    }
+    assert(
+      errors.length === this.fields.length,
+      'The number of errors does not match the number of fields.'
+    );
 
     errors.forEach((error, index) => this.get(index).setErrors(error));
   })

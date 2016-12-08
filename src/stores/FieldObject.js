@@ -1,5 +1,5 @@
 import { extendObservable, action } from 'mobx';
-import { isEmpty, getFieldRecursive } from '../utils';
+import { assert, isEmpty, getFieldRecursive } from '../utils';
 
 const eachWithField = (parent, object, fn) => {
   return Object.keys(object).forEach(name => {
@@ -77,6 +77,6 @@ export default class FieldObject {
 
   // This will be overridden in `FieldArray.add`
   handleRemove = () => {
-    throw new Error("This field is not part of a FieldArray, and therefore can't be removed");
+    assert(false, "This field is not part of a FieldArray, and therefore can't be removed");
   }
 }
