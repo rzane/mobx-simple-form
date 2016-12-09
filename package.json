@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "lib/index.js",
   "license": "MIT",
+  "description": "A simple way to manage complex forms with MobX",
+  "homepage": "https://github.com/rzane/mobx-simple-form",
+  "bugs": {
+    "url": "https://github.com/rzane/mobx-simple-form/issues"
+  },
   "devDependencies": {
     "ava": "^0.17.0",
     "babel": "^6.5.2",
@@ -34,11 +39,21 @@
     "lint": "eslint src tests pages",
     "lint:fix": "eslint src tests --fix",
     "build": "babel src --out-dir lib",
-    "postinstall": "postinstall-build lib --script build --silent"
+    "postinstall": "postinstall-build lib --script build --silent",
+    "prepublish": "npm run build"
   },
   "ava": {
     "require": [
       "babel-register"
     ]
+  },
+  "maintainers": [{
+    "name": "rzane",
+    "email": "raymondzane@gmail.com"
+  }],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rzane/mobx-simple-form.git"
+
   }
 }
