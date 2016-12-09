@@ -73,9 +73,8 @@ test('hasMany - buildFields always returns a fresh FieldObject', t => {
   t.not(many.buildFields('foo'), many.buildFields('foo'));
 });
 
-test('hasMany - accepts optional config for initial', t => {
-  const initial = [{}];
-  t.is(hasMany('name', [], { initial }).initial, initial);
+test('hasMany - accepts optional config for initialCount', t => {
+  t.is(hasMany('name', [], { initialCount: 1 }).initialCount, 1);
 });
 
 test('hasMany - throws for invalid name', t => {

@@ -2,10 +2,10 @@ import { action, extendObservable } from 'mobx';
 import { assert, getFieldRecursive } from '../utils';
 
 export default class FieldArray {
-  constructor ({ name, buildFields, initial = [] }) {
+  constructor ({ name, buildFields, initialCount = 0 }) {
     Object.assign(this, {
       name,
-      initial,
+      initialCount,
       buildFields
     });
 
@@ -17,9 +17,7 @@ export default class FieldArray {
       }
     });
 
-    if (initial.length) {
-      this.reset();
-    }
+    Array.from(Array(initialCount)).forEach(this.handleAdd);
   }
 
   /**
@@ -86,7 +84,8 @@ export default class FieldArray {
   })
 
   reset = action('FieldArray.reset', () => {
-    this.set(this.initial);
+    this.fields.clear();
+    Array.from(Array(this.initialCount)).forEach(this.handleAdd);
   })
 
   validate = action('FieldArray.validate', () => {

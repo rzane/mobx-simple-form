@@ -8,7 +8,10 @@ const makeField = (config) => new FieldArray({
     return new FieldObject({
       name,
       fields: [
-        new Field({ name: 'fixture' })
+        new Field({
+          name: 'fixture',
+          initial: 'meatloaf'
+        })
       ]
     });
   }
@@ -26,11 +29,7 @@ test.before(() => {
 
 test('initial', t => {
   const field = makeField({
-    initial: [{
-      fixture: 1
-    }, {
-      fixture: 2
-    }]
+    initialCount: 2
   });
 
   t.is(field.fields.length, 2);
@@ -120,12 +119,12 @@ test('reset', t => {
 
 test('reset - initial', t => {
   const field = makeField({
-    initial: [{
-      fixture: 'test'
-    }]
+    initialCount: 2
   });
 
   field.set([{ fixture: 'foo' }]);
   field.reset();
-  t.is(field.getIn([0, 'fixture']).value, 'test');
+
+  t.is(field.getIn([0, 'fixture']).value, 'meatloaf');
+  t.is(field.getIn([1, 'fixture']).value, 'meatloaf');
 });
