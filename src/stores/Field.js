@@ -2,7 +2,7 @@ import { action, extendObservable } from 'mobx';
 import createCaster from '../createCaster';
 import { assert, isEmpty } from '../utils';
 
-export default class FieldStore {
+export default class Field {
   constructor ({ name, type, initial = '', validate = [] }) {
     assert(name, 'A field must have a name.');
 
