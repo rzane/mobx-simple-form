@@ -31,7 +31,7 @@ const makeField = ({ simple, nested, repeat } = {}) => new FieldObject({
     new FieldArray({
       key: 'repeat',
       name: 'repeat',
-      buildFields (parentName, index) {
+      build (parentName, index) {
         return new FieldObject({
           key: index.toString(),
           fields: [

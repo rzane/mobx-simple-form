@@ -49,11 +49,11 @@ test('hasOne - throws when no fields are given', t => {
 });
 
 test('hasMany - expands config', t => {
-  const { buildFields, ...config } = hasMany('jawns', ['jint'], {
+  const { build, ...config } = hasMany('jawns', ['jint'], {
     initialCount: 1
   });
 
-  t.true(typeof buildFields === 'function');
+  t.true(typeof build === 'function');
   t.deepEqual(config, {
     key: 'jawns',
     initialCount: 1,
@@ -61,21 +61,21 @@ test('hasMany - expands config', t => {
   });
 });
 
-test('hasMany - creates a buildFields func to create a FieldObject', t => {
-  t.true(hasMany('name', []).buildFields('foo', 1) instanceof FieldObject);
+test('hasMany - creates a `build` func to create a FieldObject', t => {
+  t.true(hasMany('name', []).build('foo', 1) instanceof FieldObject);
 });
 
-test('hasMany - buildFields generates names', t => {
+test('hasMany - `build` generates names', t => {
   const field = hasMany('name', []);
-  const subfield = field.buildFields('foo', 1);
+  const subfield = field.build('foo', 1);
 
   t.is(subfield.key, '1');
   t.is(subfield.name, 'foo[1]');
 });
 
-test('hasMany - buildFields always returns a fresh FieldObject', t => {
+test('hasMany - `build` always returns a fresh FieldObject', t => {
   const many = hasMany('name', []);
-  t.not(many.buildFields('foo', 1), many.buildFields('foo', 1));
+  t.not(many.build('foo', 1), many.build('foo', 1));
 });
 
 test('hasMany - throws for invalid name', t => {

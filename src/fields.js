@@ -67,14 +67,14 @@ export const hasMany = (key, fields, options) => {
   assert(isString(key), '`hasMany` expects a name.');
   assert(isArray(fields), '`hasMany` expects an array of fields');
 
-  const buildFields = (parentName, index) => {
+  const build = (parentName, index) => {
     const config = hasOne(index.toString(), fields);
     return buildField(parentName, config);
   };
 
   return {
     key,
-    buildFields,
+    build,
     field: FieldArray,
     ...options
   };

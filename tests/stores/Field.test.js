@@ -20,6 +20,11 @@ test('constructor - throws when no name is given', t => {
   t.is(error.message, 'Field must have a name.');
 });
 
+test('key', t => {
+  const field = makeField();
+  t.is(field.key, 'fixture');
+});
+
 test('name', t => {
   const field = makeField();
   t.is(field.name, 'fixture');

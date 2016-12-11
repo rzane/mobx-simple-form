@@ -6,7 +6,7 @@ const makeField = (config) => new FieldArray({
   ...config,
   key: 'things',
   name: 'things',
-  buildFields (parentName, index) {
+  build (parentName, index) {
     return new FieldObject({
       name: index.toString(),
       fields: [
@@ -28,6 +28,42 @@ const fixtureData = [{
 
 test.before(() => {
   useStrict(true);
+});
+
+test('constructor - throws when no key is given', t => {
+  const error = t.throws(() => new FieldArray({
+    name: 'jawn',
+    build: () => null
+  }));
+
+  t.is(error.message, 'FieldArray must have a key.');
+});
+
+test('constructor - throws when no name is given', t => {
+  const error = t.throws(() => new FieldArray({
+    key: 'jawn',
+    build: () => null
+  }));
+  t.is(error.message, 'FieldArray must have a name.');
+});
+
+test('constructor - throws when no build func is given', t => {
+  const error = t.throws(() => new FieldArray({
+    key: 'jawn',
+    name: 'jawn'
+  }));
+
+  t.is(error.message, 'FieldArray must have a `build` function.');
+});
+
+test('key', t => {
+  const field = makeField();
+  t.is(field.key, 'things');
+});
+
+test('name', t => {
+  const field = makeField();
+  t.is(field.name, 'things');
 });
 
 test('initial', t => {
