@@ -3,16 +3,21 @@ import { useStrict } from 'mobx';
 import { Field } from '../../src';
 
 const makeField = (config) => (
-  new Field({ name: 'fixture', ...config })
+  new Field({ name: 'fixture', key: 'fixture', ...config })
 );
 
 test.before(() => {
   useStrict(true);
 });
 
+test('constructor - throws when no key is given', t => {
+  const error = t.throws(() => new Field({ name: 'jawn' }));
+  t.is(error.message, 'Field must have a key.');
+});
+
 test('constructor - throws when no name is given', t => {
-  const error = t.throws(() => new Field({}));
-  t.is(error.message, 'A field must have a name.');
+  const error = t.throws(() => new Field({ key: 'jawn' }));
+  t.is(error.message, 'Field must have a name.');
 });
 
 test('name', t => {

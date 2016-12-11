@@ -19,22 +19,24 @@ const fixtureData = {
 
 const makeField = ({ simple, nested, repeat } = {}) => new FieldObject({
   fields: [
-    new Field({ name: 'simple', ...simple }),
+    new Field({ key: 'simple', name: 'simple', ...simple }),
     new FieldObject({
+      key: 'nested',
       name: 'nested',
       fields: [
-        new Field({ name: 'foo', ...nested }),
-        new Field({ name: 'bar' })
+        new Field({ key: 'foo', name: 'nested[foo]', ...nested }),
+        new Field({ key: 'bar', name: 'nested[bar]' })
       ]
     }),
     new FieldArray({
+      key: 'repeat',
       name: 'repeat',
       buildFields (parentName, index) {
         return new FieldObject({
-          name: index.toString(),
+          key: index.toString(),
           fields: [
-            new Field({ name: 'meat', ...repeat }),
-            new Field({ name: 'loaf' })
+            new Field({ key: 'meat', name: `${parentName}[${index}][meat]`, ...repeat }),
+            new Field({ key: 'loaf', name: `${parentName}[${index}][loaf]` })
           ]
         });
       }

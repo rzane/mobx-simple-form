@@ -3,12 +3,13 @@ import createCaster from '../createCaster';
 import { assert, isEmpty } from '../utils';
 
 export default class Field {
-  constructor ({ name, inputName, type, initial = '', validate = [] }) {
-    assert(name, 'A field must have a name.');
+  constructor ({ key, name, type, initial = '', validate = [] }) {
+    assert(key, 'Field must have a key.');
+    assert(name, 'Field must have a name.');
 
     Object.assign(this, {
+      key,
       name,
-      inputName,
       initial,
       type,
       cast: createCaster(type),

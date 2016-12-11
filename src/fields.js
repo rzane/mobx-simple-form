@@ -4,34 +4,30 @@ import FieldObject from './stores/FieldObject';
 import Form from './stores/Form';
 import { assert, isString, isArray, isObject } from './utils';
 
-const getName = (parentName, childName) => (
-  parentName ? `${parentName}[${childName}]` : childName
+const getName = (parentName, key) => (
+  parentName ? `${parentName}[${key}]` : key
 );
 
 const buildFieldFromConfig = (parentName, {
-  name,
+  key,
   fields,
   field: FieldType,
   ...config
 }) => {
-  const inputName = getName(parentName, name);
+  const name = getName(parentName, key);
 
   if (fields) {
-    config.fields = buildFields(inputName, fields);
+    config.fields = buildFields(name, fields);
   }
 
-  return new FieldType({
-    ...config,
-    name,
-    inputName
-  });
+  return new FieldType({ key, name, ...config });
 };
 
 const buildField = (parentName, config) => {
   if (isString(config)) {
     return new Field({
-      name: config,
-      inputName: getName(parentName, config)
+      key: config,
+      name: getName(parentName, config)
     });
   }
 
@@ -46,28 +42,29 @@ const buildFields = (parentName, configs) => {
   return configs.map(config => buildField(parentName, config));
 };
 
-export const field = (name, config) => {
-  assert(isString(name), '`field` expects a name.');
+export const field = (key, config) => {
+  assert(isString(key), '`field` expects a name.');
 
   return {
-    name,
+    key,
     field: Field,
     ...config
   };
 };
 
-export const hasOne = (name, fields) => {
-  assert(isString(name), '`hasOne` expects a name.');
+export const hasOne = (key, fields) => {
+  assert(isString(key), '`hasOne` expects a name.');
   assert(isArray(fields), '`hasOne` expects an array of fields');
 
   return {
-    name,
+    key,
     fields,
     field: FieldObject
   };
 };
 
-export const hasMany = (name, fields, options) => {
+export const hasMany = (key, fields, options) => {
+  assert(isString(key), '`hasMany` expects a name.');
   assert(isArray(fields), '`hasMany` expects an array of fields');
 
   const buildFields = (parentName, index) => {
@@ -76,7 +73,7 @@ export const hasMany = (name, fields, options) => {
   };
 
   return {
-    name,
+    key,
     buildFields,
     field: FieldArray,
     ...options

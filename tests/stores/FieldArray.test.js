@@ -4,12 +4,15 @@ import { Field, FieldArray, FieldObject } from '../../src';
 
 const makeField = (config) => new FieldArray({
   ...config,
+  key: 'things',
+  name: 'things',
   buildFields (parentName, index) {
     return new FieldObject({
       name: index.toString(),
       fields: [
         new Field({
-          name: 'fixture',
+          key: 'fixture',
+          name: `${parentName}[${index}][fixture]`,
           initial: 'meatloaf'
         })
       ]

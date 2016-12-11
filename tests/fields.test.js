@@ -9,16 +9,16 @@ import simpleForm, {
   FieldArray
 } from '../src';
 
-test('field - can take just a name', t => {
+test('field - expands config', t => {
   t.deepEqual(field('jawn'), {
-    name: 'jawn',
+    key: 'jawn',
     field: Field
   });
 });
 
-test('field - accepts optional config', t => {
+test('field - accepts extra config', t => {
   t.deepEqual(field('jawn', { foo: 'bar' }), {
-    name: 'jawn',
+    key: 'jawn',
     foo: 'bar',
     field: Field
   });
@@ -32,7 +32,7 @@ test('field - throws for invalid name', t => {
 
 test('hasOne - expands config', t => {
   t.deepEqual(hasOne('jawn', ['jint']), {
-    name: 'jawn',
+    key: 'jawn',
     fields: ['jint'],
     field: FieldObject
   });
@@ -55,7 +55,7 @@ test('hasMany - expands config', t => {
 
   t.true(typeof buildFields === 'function');
   t.deepEqual(config, {
-    name: 'jawns',
+    key: 'jawns',
     initialCount: 1,
     field: FieldArray
   });
@@ -69,8 +69,8 @@ test('hasMany - buildFields generates names', t => {
   const field = hasMany('name', []);
   const subfield = field.buildFields('foo', 1);
 
-  t.is(subfield.name, '1');
-  t.is(subfield.inputName, 'foo[1]');
+  t.is(subfield.key, '1');
+  t.is(subfield.name, 'foo[1]');
 });
 
 test('hasMany - buildFields always returns a fresh FieldObject', t => {
@@ -120,8 +120,8 @@ const testNesting = (type) => (path) => {
     form.getIn(['friends', 0, 'pets']).add();
 
     t.true(form.getIn(path) instanceof type);
-    t.is(form.getIn(path).name, path[path.length - 1]);
-    t.is(form.getIn(path).inputName, path.reduce(
+    t.is(form.getIn(path).key, path[path.length - 1]);
+    t.is(form.getIn(path).name, path.reduce(
       (name, coord) => `${name}[${coord}]`
     ));
   });

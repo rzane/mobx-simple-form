@@ -2,22 +2,22 @@ import { extendObservable, action } from 'mobx';
 import { assert, isEmpty, getFieldRecursive } from '../utils';
 
 const eachWithField = (parent, object, fn) => {
-  return Object.keys(object).forEach(name => {
-    const field = parent.get(name);
-    if (field) fn(field, object[name]);
+  return Object.keys(object).forEach(key => {
+    const field = parent.get(key);
+    if (field) fn(field, object[key]);
   });
 };
 
 export default class FieldObject {
-  constructor ({ inputName, name, fields }) {
+  constructor ({ key, name, fields }) {
     this.indexedFields = fields.reduce(
-      (acc, f) => ({ ...acc, [f.name]: f }),
+      (acc, f) => ({ ...acc, [f.key]: f }),
       {}
     );
 
     Object.assign(this, {
-      name,
-      inputName
+      key,
+      name
     });
 
     extendObservable(this, {
@@ -33,25 +33,25 @@ export default class FieldObject {
    * Methods
    */
 
-  get (name) {
-    return this.indexedFields[name];
+  get (key) {
+    return this.indexedFields[key];
   }
 
-  getIn (names) {
-    return getFieldRecursive(this, names);
+  getIn (keys) {
+    return getFieldRecursive(this, keys);
   }
 
   values () {
     return this.fields.reduce((acc, field) => ({
       ...acc,
-      [field.name]: field.values ? field.values() : field.value
+      [field.key]: field.values ? field.values() : field.value
     }), {});
   }
 
   errors () {
     return this.fields.reduce((acc, field) => {
       const error = field.errors ? field.errors() : field.error;
-      return isEmpty(error) ? acc : { ...acc, [field.name]: error };
+      return isEmpty(error) ? acc : { ...acc, [field.key]: error };
     }, {});
   }
 

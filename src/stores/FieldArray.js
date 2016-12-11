@@ -2,10 +2,13 @@ import { action, extendObservable } from 'mobx';
 import { assert, getFieldRecursive } from '../utils';
 
 export default class FieldArray {
-  constructor ({ name, inputName, buildFields, initialCount = 0 }) {
+  constructor ({ key, name, buildFields, initialCount = 0 }) {
+    assert(key, 'FieldArray must have a key.');
+    assert(name, 'FieldArray must have a name.');
+
     Object.assign(this, {
+      key,
       name,
-      inputName,
       initialCount,
       buildFields
     });
@@ -32,8 +35,8 @@ export default class FieldArray {
     }
   }
 
-  getIn (names) {
-    return getFieldRecursive(this, names);
+  getIn (keys) {
+    return getFieldRecursive(this, keys);
   }
 
   map (fn) {
@@ -56,7 +59,7 @@ export default class FieldArray {
 
   add = action('FieldArray.add', (extra) => {
     const field = this.buildFields(
-      this.inputName,
+      this.name,
       this.fields.length
     );
 
