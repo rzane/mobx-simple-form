@@ -10,14 +10,18 @@ import simpleForm, {
 } from '../src';
 
 test('field - can take just a name', t => {
-  t.deepEqual(field('jawn'), { name: 'jawn' });
+  t.deepEqual(field('jawn'), {
+    name: 'jawn',
+    field: Field
+  });
 });
 
 test('field - accepts optional config', t => {
-  t.deepEqual(
-    field('jawn', { foo: 'bar' }),
-    { name: 'jawn', foo: 'bar' }
-  );
+  t.deepEqual(field('jawn', { foo: 'bar' }), {
+    name: 'jawn',
+    foo: 'bar',
+    field: Field
+  });
 });
 
 test('field - throws for invalid name', t => {
@@ -26,20 +30,12 @@ test('field - throws for invalid name', t => {
   t.throws(() => field({}));
 });
 
-test('hasOne - creates a FieldObject', t => {
-  t.true(hasOne('name', []) instanceof FieldObject);
-});
-
-test('hasOne - takes a name', t => {
-  t.is(hasOne('name', []).name, 'name');
-});
-
-test('hasOne - builds fields when given string', t => {
-  t.true(hasOne('name', ['foo']).get('foo') instanceof Field);
-});
-
-test('hasOne - builds fields when given field', t => {
-  t.true(hasOne('name', [field('foo')]).get('foo') instanceof Field);
+test('hasOne - expands config', t => {
+  t.deepEqual(hasOne('jawn', ['jint']), {
+    name: 'jawn',
+    fields: ['jint'],
+    field: FieldObject
+  });
 });
 
 test('hasOne - throws for invalid name', t => {
@@ -52,12 +48,17 @@ test('hasOne - throws when no fields are given', t => {
   t.throws(() => hasOne('foo'));
 });
 
-test('hasMany - creates a field array', t => {
-  t.true(hasMany('name', []) instanceof FieldArray);
-});
+test('hasMany - expands config', t => {
+  const { buildFields, ...config } = hasMany('jawns', ['jint'], {
+    initialCount: 1
+  });
 
-test('hasMany - takes a name', t => {
-  t.is(hasMany('name', []).name, 'name');
+  t.true(typeof buildFields === 'function');
+  t.deepEqual(config, {
+    name: 'jawns',
+    initialCount: 1,
+    field: FieldArray
+  });
 });
 
 test('hasMany - creates a buildFields func to create a FieldObject', t => {
@@ -71,10 +72,6 @@ test('hasMany - buildFields takes a name', t => {
 test('hasMany - buildFields always returns a fresh FieldObject', t => {
   const many = hasMany('name', []);
   t.not(many.buildFields('foo'), many.buildFields('foo'));
-});
-
-test('hasMany - accepts optional config for initialCount', t => {
-  t.is(hasMany('name', [], { initialCount: 1 }).initialCount, 1);
 });
 
 test('hasMany - throws for invalid name', t => {

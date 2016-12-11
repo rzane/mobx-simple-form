@@ -4,18 +4,23 @@ import FieldObject from './stores/FieldObject';
 import Form from './stores/Form';
 import { assert, isString, isArray, isObject } from './utils';
 
-const FIELD_MARKER = Symbol('field');
-
 const buildField = (config) => {
   if (isString(config)) {
     return new Field({ name: config });
   }
 
-  if (isObject(config) && config[FIELD_MARKER]) {
-    return new Field(config);
+  if (isObject(config) && config.field) {
+    const FieldType = config.field;
+
+    if (config.fields) {
+      const fields = config.fields.map(buildField);
+      return new FieldType({ ...config, fields });
+    } else {
+      return new FieldType(config);
+    }
   }
 
-  return config;
+  throw new Error(`Invalid field configuration: ${JSON.stringify(config)}`);
 };
 
 export const field = (name, config) => {
@@ -24,7 +29,7 @@ export const field = (name, config) => {
   return {
     name,
     ...config,
-    [FIELD_MARKER]: true
+    field: Field
   };
 };
 
@@ -32,22 +37,24 @@ export const hasOne = (name, fields) => {
   assert(isString(name), '`hasOne` expects a name.');
   assert(isArray(fields), '`hasOne` expects an array of fields');
 
-  return new FieldObject({
+  return {
     name,
-    fields: fields.map(buildField)
-  });
+    fields,
+    field: FieldObject
+  };
 };
 
 export const hasMany = (name, fields, options) => {
   assert(isArray(fields), '`hasMany` expects an array of fields');
 
-  return new FieldArray({
+  return {
     name,
     ...options,
+    field: FieldArray,
     buildFields (name) {
-      return hasOne(name, fields);
+      return buildField(hasOne(name, fields));
     }
-  });
+  };
 };
 
 export default (fields) => {
