@@ -2,9 +2,10 @@ import { action, extendObservable } from 'mobx';
 import { assert, getFieldRecursive } from '../utils';
 
 export default class FieldArray {
-  constructor ({ name, buildFields, initialCount = 0 }) {
+  constructor ({ name, inputName, buildFields, initialCount = 0 }) {
     Object.assign(this, {
       name,
+      inputName,
       initialCount,
       buildFields
     });
@@ -54,8 +55,10 @@ export default class FieldArray {
    */
 
   add = action('FieldArray.add', (extra) => {
-    const name = this.fields.length.toString();
-    const field = this.buildFields(name);
+    const field = this.buildFields(
+      this.inputName,
+      this.fields.length
+    );
 
     // Monkey-patch the field with an event handler
     // to remove the field.

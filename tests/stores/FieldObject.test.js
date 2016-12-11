@@ -29,9 +29,9 @@ const makeField = ({ simple, nested, repeat } = {}) => new FieldObject({
     }),
     new FieldArray({
       name: 'repeat',
-      buildFields (name) {
+      buildFields (parentName, index) {
         return new FieldObject({
-          name,
+          name: index.toString(),
           fields: [
             new Field({ name: 'meat', ...repeat }),
             new Field({ name: 'loaf' })

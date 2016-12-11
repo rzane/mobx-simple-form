@@ -62,16 +62,20 @@ test('hasMany - expands config', t => {
 });
 
 test('hasMany - creates a buildFields func to create a FieldObject', t => {
-  t.true(hasMany('name', []).buildFields('foo') instanceof FieldObject);
+  t.true(hasMany('name', []).buildFields('foo', 1) instanceof FieldObject);
 });
 
-test('hasMany - buildFields takes a name', t => {
-  t.is(hasMany('name', []).buildFields('foo').name, 'foo');
+test('hasMany - buildFields generates names', t => {
+  const field = hasMany('name', []);
+  const subfield = field.buildFields('foo', 1);
+
+  t.is(subfield.name, '1');
+  t.is(subfield.inputName, 'foo[1]');
 });
 
 test('hasMany - buildFields always returns a fresh FieldObject', t => {
   const many = hasMany('name', []);
-  t.not(many.buildFields('foo'), many.buildFields('foo'));
+  t.not(many.buildFields('foo', 1), many.buildFields('foo', 1));
 });
 
 test('hasMany - throws for invalid name', t => {
@@ -88,48 +92,56 @@ test('simpleForm - creates a FieldObject', t => {
   t.true(simpleForm([]) instanceof Form);
 });
 
-test('simpleForm - builds a deeply nested form', t => {
-  const testForm = simpleForm([
-    'name',
-    field('email'),
-    hasOne('address', [
-      field('street'),
-      hasOne('city', [
-        'name',
-        field('zipCode'),
-        hasMany('residents', [field('name')])
+const testNesting = (type) => (path) => {
+  test(`simpleForm - ${path.join(' > ')}`, t => {
+    const form = simpleForm([
+      'name',
+      field('email'),
+      hasOne('address', [
+        field('street'),
+        hasOne('city', [
+          'name',
+          field('zipCode'),
+          hasMany('residents', [field('name')])
+        ])
+      ]),
+      hasMany('friends', [
+        field('name'),
+        hasOne('skill', [field('name')]),
+        hasMany('pets', [field('name')])
       ])
-    ]),
-    hasMany('friends', [
-      field('name'),
-      hasOne('skill', [field('name')]),
-      hasMany('pets', [field('name')])
-    ])
-  ]);
+    ]);
 
-  testForm.get('friends').add();
-  testForm.get('friends').add();
-  testForm.getIn(['address', 'city', 'residents']).add();
-  testForm.getIn(['address', 'city', 'residents']).add();
-  testForm.getIn(['friends', 0, 'pets']).add();
-  testForm.getIn(['friends', 0, 'pets']).add();
+    form.get('friends').add();
+    form.get('friends').add();
+    form.getIn(['address', 'city', 'residents']).add();
+    form.getIn(['address', 'city', 'residents']).add();
+    form.getIn(['friends', 0, 'pets']).add();
+    form.getIn(['friends', 0, 'pets']).add();
 
-  const coordinates = [
-    ['name'],
-    ['email'],
-    ['address', 'street'],
-    ['address', 'city', 'name'],
-    ['address', 'city', 'zipCode'],
-    ['address', 'city', 'residents', 0, 'name'],
-    ['address', 'city', 'residents', 1, 'name'],
-    ['friends', 0, 'name'],
-    ['friends', 0, 'skill', 'name'],
-    ['friends', 0, 'pets', 0, 'name'],
-    ['friends', 0, 'pets', 1, 'name']
-  ];
-
-  coordinates.forEach((coordinate) => {
-    t.true(testForm.getIn(coordinate) instanceof Field);
-    t.is(testForm.getIn(coordinate).name, coordinate[coordinate.length - 1]);
+    t.true(form.getIn(path) instanceof type);
+    t.is(form.getIn(path).name, path[path.length - 1]);
+    t.is(form.getIn(path).inputName, path.reduce(
+      (name, coord) => `${name}[${coord}]`
+    ));
   });
-});
+};
+
+[
+  ['name'],
+  ['email'],
+  ['address', 'street'],
+  ['address', 'city', 'name'],
+  ['address', 'city', 'zipCode'],
+  ['address', 'city', 'residents', 0, 'name'],
+  ['address', 'city', 'residents', 1, 'name'],
+  ['friends', 0, 'name'],
+  ['friends', 0, 'skill', 'name'],
+  ['friends', 0, 'pets', 0, 'name'],
+  ['friends', 0, 'pets', 1, 'name']
+].forEach(testNesting(Field));
+
+[
+  ['friends'],
+  ['address', 'city', 'residents']
+].forEach(testNesting(FieldArray));

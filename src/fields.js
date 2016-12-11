@@ -4,23 +4,46 @@ import FieldObject from './stores/FieldObject';
 import Form from './stores/Form';
 import { assert, isString, isArray, isObject } from './utils';
 
-const buildField = (config) => {
+const getName = (parentName, childName) => (
+  parentName ? `${parentName}[${childName}]` : childName
+);
+
+const buildFieldFromConfig = (parentName, {
+  name,
+  fields,
+  field: FieldType,
+  ...config
+}) => {
+  const inputName = getName(parentName, name);
+
+  if (fields) {
+    config.fields = buildFields(inputName, fields);
+  }
+
+  return new FieldType({
+    ...config,
+    name,
+    inputName
+  });
+};
+
+const buildField = (parentName, config) => {
   if (isString(config)) {
-    return new Field({ name: config });
+    return new Field({
+      name: config,
+      inputName: getName(parentName, config)
+    });
   }
 
   if (isObject(config) && config.field) {
-    const FieldType = config.field;
-
-    if (config.fields) {
-      const fields = config.fields.map(buildField);
-      return new FieldType({ ...config, fields });
-    } else {
-      return new FieldType(config);
-    }
+    return buildFieldFromConfig(parentName, config);
   }
 
   throw new Error(`Invalid field configuration: ${JSON.stringify(config)}`);
+};
+
+const buildFields = (parentName, configs) => {
+  return configs.map(config => buildField(parentName, config));
 };
 
 export const field = (name, config) => {
@@ -28,8 +51,8 @@ export const field = (name, config) => {
 
   return {
     name,
-    ...config,
-    field: Field
+    field: Field,
+    ...config
   };
 };
 
@@ -47,13 +70,16 @@ export const hasOne = (name, fields) => {
 export const hasMany = (name, fields, options) => {
   assert(isArray(fields), '`hasMany` expects an array of fields');
 
+  const buildFields = (parentName, index) => {
+    const config = hasOne(index.toString(), fields);
+    return buildField(parentName, config);
+  };
+
   return {
     name,
-    ...options,
+    buildFields,
     field: FieldArray,
-    buildFields (name) {
-      return buildField(hasOne(name, fields));
-    }
+    ...options
   };
 };
 
@@ -61,6 +87,6 @@ export default (fields) => {
   assert(isArray(fields), '`form` expects an array of fields');
 
   return new Form({
-    fields: fields.map(buildField)
+    fields: fields.map(config => buildField(null, config))
   });
 };

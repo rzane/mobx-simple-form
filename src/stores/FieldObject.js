@@ -9,13 +9,16 @@ const eachWithField = (parent, object, fn) => {
 };
 
 export default class FieldObject {
-  constructor ({ name, fields }) {
-    this.name = name;
-
+  constructor ({ inputName, name, fields }) {
     this.indexedFields = fields.reduce(
       (acc, f) => ({ ...acc, [f.name]: f }),
       {}
     );
+
+    Object.assign(this, {
+      name,
+      inputName
+    });
 
     extendObservable(this, {
       fields,
