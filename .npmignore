@@ -1,4 +1,5 @@
-src
-tests
-pages
-node_modules
+/src
+/tests
+/pages
+/.next
+/node_modules
